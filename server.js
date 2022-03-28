@@ -1,10 +1,14 @@
 const express = require( 'express' );
+const cors = require( 'cors' );
+
 require( './config/config' );
 const app = express();
 const TodoRouter = require( './rutas/rutaTodo' );
-
+const UsuarioRouter = require( './rutas/rutaUsuario' );
+app.use( cors() );
 app.use( express.json() );
-app.use( '/api/todo', TodoRouter )
+app.use( '/api/todo', TodoRouter );
+app.use( '/api/usuario', UsuarioRouter);
 
 /*
 app.get( '/api/todo/buscar', ( request, response ) => {
