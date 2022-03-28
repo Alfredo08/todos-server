@@ -25,6 +25,7 @@ const crearUsuario = ( request, response ) => {
 
 const obtenerUsuarios = ( request, response ) => {
     Usuario.find()
+        .populate( 'todos', ['nombre', 'status', 'id'] )
         .then( listaUsuarios => {
             return response.status( 200 ).json( listaUsuarios );
         })
@@ -51,6 +52,7 @@ const obtenerUsuarioPorId = ( request, response ) => {
     const {nombreUsuario} = request.params;
 
     Usuario.find({nombreUsuario})
+        .populate( 'todos', ['id', 'status', 'nombre'])
         .then( listaUsuarios => {
             return response.status( 200 ).json( listaUsuarios[0] );
         })

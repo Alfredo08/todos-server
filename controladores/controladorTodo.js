@@ -24,7 +24,7 @@ const insertarTodo = ( request, response ) => {
             
                     Todo.create( nuevoTodo )
                         .then( datoNuevo => {
-                            Usuario.findOneAndUpdate( {nombreUsuario}, { $push : { todos : nuevoTodo } } )
+                            Usuario.findOneAndUpdate( {nombreUsuario}, { $push : { todos : datoNuevo._id } } )
                                 .then( () => {
                                     return response.status( 201 ).json( datoNuevo );
                                 });
