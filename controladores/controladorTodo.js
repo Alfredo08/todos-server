@@ -82,8 +82,6 @@ const actualizarTodo = ( request, response ) => {
             response.statusMessage = "Hubo un error al ejecutar el update. " + err;
             return response.status( 400 ).end();
         });
-
-    /* Pendiente por hacer: actualizar listado de Usuarios */
 }
 
 const ControladorTodo = {
