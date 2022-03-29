@@ -30,8 +30,9 @@ const insertarTodo = ( request, response ) => {
                                 });
                         })
                         .catch( err => {
-                            response.statusMessage = "Hubo un error al ejecutar el insert. " + err;
-                            return response.status( 400 ).end();
+                            console.log( err );
+                            response.statusMessage = "Hubo un error al ejecutar el insert! " + err;
+                            return response.status( 400 ).json(err);
                         });
                 }
             })
