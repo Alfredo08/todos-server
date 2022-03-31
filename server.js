@@ -1,13 +1,14 @@
 const express = require( 'express' );
 const cors = require( 'cors' );
-
 require( './config/config' );
+const validarToken = require( './util/validarToken' );
 const app = express();
 const TodoRouter = require( './rutas/rutaTodo' );
 const UsuarioRouter = require( './rutas/rutaUsuario' );
 app.use( cors() );
 app.use( express.json() );
-app.use( '/api/todo', TodoRouter );
+
+app.use( '/api/todo', validarToken, TodoRouter );
 app.use( '/api/usuario', UsuarioRouter);
 
 /*
