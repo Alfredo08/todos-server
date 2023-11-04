@@ -6,7 +6,10 @@ const secreto = "estoessecreto";
 const Usuario = require( './../modelos/modeloUsuario' );
 
 const crearUsuario = ( request, response ) => {
-    const { nombre, apellido, nombreUsuario, password } = request.body;
+    const nombre = request.body.firstName;
+    const apellido = request.body.lastName;
+    const nombreUsuario = request.body.userName;
+    const password = request.body.password;
 
     if( nombre && apellido && nombreUsuario && password ){
 
@@ -32,17 +35,22 @@ const crearUsuario = ( request, response ) => {
                         }
 
                         jwt.sign( payload, secreto, expiracion, (err, token) => {
-                            return response.status( 201 ).json( {token} );
+                            return response.status( 201 ).json( {
+                                token : token,
+                                firstName : usuarioCreado.nombre,
+                                lastName : usuarioCreado.apellido,
+                                userName : usuarioCreado.nombreUsuario
+                            } );
                         });
                     })
                     .catch( err => {
-                        response.statusMessage = "Hubo un error al ejecutar el insert. " + err;
+                        response.statusMessage = "Error while triggering insert. " + err;
                         return response.status( 400 ).end();
                     });
             });
     }
     else{
-        response.statusMessage = "Se necesita proporcionar 'nombre', 'apellido', 'nombreUsuario'."
+        response.statusMessage = "You need to send 'firstName', 'lastName', 'userName'."
         return response.status( 406 ).end();
     }
 }
@@ -54,26 +62,26 @@ const obtenerUsuarios = ( request, response ) => {
             return response.status( 200 ).json( listaUsuarios );
         })
         .catch( err => {
-            response.statusMessage = "Hubo un error al ejecutar el insert. " + err;
+            response.statusMessage = "Error while triggering insert. " + err;
             return response.status( 400 ).end();
         });
 }
 
 const eliminarUsuario = ( request, response ) => {
-    const { nombreUsuario } = request.params;
+    const nombreUsuario = request.params.userName;
 
     Usuario.deleteOne( {nombreUsuario} )
         .then( () => {
             return response.status( 204 ).end()
         })
         .catch( err => {
-            response.statusMessage = "Hubo un error al ejecutar el insert. " + err;
+            response.statusMessage = "Error while triggering insert. " + err;
             return response.status( 400 ).end();
         });
 }
 
 const obtenerUsuarioPorId = ( request, response ) => {
-    const {nombreUsuario} = request.params;
+    const nombreUsuario = request.params.userName;
 
     Usuario.find({nombreUsuario})
         .populate( 'todos', ['id', 'status', 'nombre'])
@@ -81,25 +89,26 @@ const obtenerUsuarioPorId = ( request, response ) => {
             return response.status( 200 ).json( listaUsuarios[0] );
         })
         .catch( err => {
-            response.statusMessage = "Hubo un error al ejecutar el insert. " + err;
+            response.statusMessage = "Error while triggering insert. " + err;
             return response.status( 400 ).end();
         });
 }
 
 const login = ( request, response ) => {
-    const { nombreUsuario, password } = request.body;
-
+    const nombreUsuario = request.body.userName;
+    const password = request.body.password;
+    console.log(nombreUsuario, password, request.body)
     Usuario.findOne( {nombreUsuario} )
         .then( usuarioEncontrado => {
             if( usuarioEncontrado === null ){
-                response.statusMessage = "Usuario no encontrado.";
+                response.statusMessage = "User not found.";
                 return response.status( 404 ).end();
             }
             else{
                 bcrypt.compare( password, usuarioEncontrado.password )
                     .then( resultado => {
                         if( ! resultado ){
-                            response.statusMessage = "Credenciales invalidas.";
+                            response.statusMessage = "Wrong credentials.";
                             return response.status( 404 ).end();
                         }
                         else{
@@ -112,11 +121,12 @@ const login = ( request, response ) => {
                             const expiracion = {
                                 expiresIn : '20m'
                             }
-
                             jwt.sign( payload, secreto, expiracion, (err, token) => {
                                 return response.status( 200 ).json({
-                                    mensaje : `Bienvenido de vuelta ${usuarioEncontrado.nombre} ${usuarioEncontrado.apellido}.`,
-                                    token
+                                    token : token,
+                                    firstName : usuarioEncontrado.nombre,
+                                    lastName : usuarioEncontrado.apellido,
+                                    userName : nombreUsuario
                                 });  
                             });
                             
@@ -134,7 +144,7 @@ const validarToken = ( request, response ) => {
 
     jwt.verify( token, secreto, ( err , decodificado ) => {
         if( err ){
-            response.statusMessage = "El token ha expirado o es invalido.";
+            response.statusMessage = "Invalid or expired token.";
             return response.status( 406 ).end();
         }
         else{

@@ -3,8 +3,9 @@ const TodoRouter = express.Router();
 
 const ControladorTodo = require( './../controladores/controladorTodo' );
 
-TodoRouter.post( '/nuevo', ControladorTodo.insertarTodo );
+TodoRouter.post( '/new', ControladorTodo.insertarTodo );
 TodoRouter.get( '/getAll', ControladorTodo.obtenerTodos );
-TodoRouter.delete( '/eliminar/:id', ControladorTodo.deleteTodo );
-TodoRouter.put( '/actualizar', ControladorTodo.actualizarTodo );
+TodoRouter.delete( '/delete/:id', ControladorTodo.deleteTodo );
+TodoRouter.put( '/update', ControladorTodo.actualizarTodo );
+TodoRouter.get( '/getByUserId/:id', ControladorTodo.getByUserId)
 module.exports = TodoRouter;

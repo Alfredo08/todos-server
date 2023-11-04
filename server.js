@@ -7,9 +7,11 @@ const TodoRouter = require( './rutas/rutaTodo' );
 const UsuarioRouter = require( './rutas/rutaUsuario' );
 app.use( cors() );
 app.use( express.json() );
+app.use(express.urlencoded({extended:true}));
 
-app.use( '/api/todo', validarToken, TodoRouter );
-app.use( '/api/usuario', UsuarioRouter);
+
+app.use( '/api/todos', validarToken, TodoRouter );
+app.use( '/api/users', UsuarioRouter);
 
 /*
 app.get( '/api/todo/buscar', ( request, response ) => {

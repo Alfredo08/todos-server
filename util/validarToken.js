@@ -6,7 +6,7 @@ function validarToken( request, response, next ){
 
     jwt.verify( token, secreto, ( err , decodificado ) => {
         if( err ){
-            response.statusMessage = "No autorizado";
+            response.statusMessage = "Not authorized";
             return response.status( 406 ).end();
         }
         else{
